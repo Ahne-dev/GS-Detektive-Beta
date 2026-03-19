@@ -44,6 +44,25 @@
             overflow-x: hidden;
         }
 
+        /* Overlay für geöffnete Menüs */
+        .overlay-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(4px);
+            z-index: 150; /* Über den Toggle-Buttons */
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .overlay-bg.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
         #zoom-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.95); z-index: 2000;
@@ -78,16 +97,18 @@
             background: var(--sidebar-bg);
             padding: 24px;
             position: fixed; top: 0; height: 100vh; width: var(--sidebar-width);
-            z-index: 100; box-shadow: 0 0 30px rgba(0,0,0,0.3);
+            z-index: 200; /* Höchste Ebene */
+            box-shadow: 0 0 30px rgba(0,0,0,0.5);
             display: flex; flex-direction: column; gap: 20px; color: #ffffff;
+            overflow-y: auto;
         }
         .sidebar-left { left: 0; transform: translateX(-100%); }
         .sidebar-right { right: 0; transform: translateX(100%); }
         aside.open { transform: translateX(0); }
 
-        .sidebar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
-        .sidebar-header h2 { font-size: 0.8rem; letter-spacing: 2px; font-weight: 800; margin: 0; opacity: 0.5; text-transform: uppercase; }
-        .close-sidebar { cursor: pointer; opacity: 0.7; }
+        .sidebar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .sidebar-header h2 { font-size: 0.85rem; letter-spacing: 2px; font-weight: 800; margin: 0; opacity: 0.6; text-transform: uppercase; }
+        .close-sidebar { cursor: pointer; opacity: 0.7; padding: 5px; }
 
         .sidebar-card { background: #0a0f1d; border-radius: 16px; padding: 18px; margin-bottom: 10px; }
         .status-user-name { font-size: 1.1rem; font-weight: 800; margin-bottom: 2px; text-align: left; }
@@ -115,7 +136,8 @@
         .nav-item.active { background: #2563eb; color: white; }
 
         .sidebar-toggle {
-            position: fixed; top: 20px; z-index: 110; background: var(--accent-color); color: white; border: none;
+            position: fixed; top: 20px; z-index: 80; /* Niedriger als Overlay und Sidebar */
+            background: var(--accent-color); color: white; border: none;
             width: 50px; height: 50px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center;
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
@@ -154,10 +176,10 @@
             display: flex; align-items: center; justify-content: center; 
             border: 3px solid var(--border-color); 
             position: relative; 
-            max-height: 45vh; /* Standard für Mobile */
+            max-height: 45vh; 
         }
         @media (min-width: 1024px) {
-            .media-container { max-height: 30vh; } /* Stärker begrenzt auf großen Bildschirmen */
+            .media-container { max-height: 32vh; } 
         }
         .media-container img { width: auto; max-width: 100%; height: auto; max-height: inherit; cursor: zoom-in; object-fit: contain; }
 
@@ -260,7 +282,6 @@
             <div class="nav-item" onclick="openMissionMenu('fak'); closeSidebars();"><i data-lucide="help-circle"></i> Fakten-Radar</div>
             <div class="nav-item" onclick="openMissionMenu('dat'); closeSidebars();"><i data-lucide="lock"></i> Sicherheit</div>
             
-            <!-- Ansprechpartner Bereich am unteren Ende -->
             <div style="margin-top: auto; padding: 15px; border-top: 1px solid rgba(255,255,255,0.1); font-size: 0.8rem; opacity: 0.6;">
                 <div style="display: flex; align-items: center; gap: 8px;">
                     <i data-lucide="mail" style="width: 14px;"></i>
@@ -382,13 +403,13 @@
             txt: [
                 { short: "Höflichkeit", info: "KI-Chatbots sind immer extrem höflich. Die Computerprogramme antworten stets sehr freundlich und hilfsbereit.", q: "Wie antwortet eine KI meistens auf Fragen?", a: ["Sie ist auffallend höflich und schreibt viel.", "Sie antwortet eher frech und kurz.", "Sie wird am Telefon oft laut."], c: 0, h: "KIs sagen oft Dinge wie: 'Gerne helfe ich dir bei deinem Anliegen'." },
                 { short: "Wortwahl", info: "KIs benutzen oft förmliche Wörter und komplizierte Ausdrücke, die Menschen im Alltag selten verwenden würden.", q: "Welche Wortwahl ist typisch für eine KI?", a: ["Sie benutzt sehr viel Jugendsprache.", "Sie nutzt förmliche und schwere Wörter.", "Sie schreibt niemals ganze Sätze."], c: 1, h: "KIs klingen oft wie ein sehr schlaues Lexikon, selten wie ein Kumpel." },
-                { short: "Fehler", info: "KIs machen fast nie Tippfehler, während Menschen sich beim schnellen Tippen oft vertun.", q: "Was fehlt in KI-Texten fast immer?", a: ["Sie nutzt niemals Großbuchstaben.", "Sie nutzt überhaupt keine Satzzeichen.", "Es fehlen typische Tippfehler im Text."], c: 2, h: "Überlege: Wenn du schnell eine Nachricht schreibst, vertippst du dich manchmal?" },
+                { short: "Fehler", info: "KI-Chatbots machen fast nie Tippfehler, während Menschen sich beim schnellen Tippen oft vertun.", q: "Was fehlt in KI-Texten fast immer?", a: ["Sie nutzt niemals Großbuchstaben.", "Sie nutzt überhaupt keine Satzzeichen.", "Es fehlen typische Tippfehler im Text."], c: 2, h: "Überlege: Wenn du schnell eine Nachricht schreibst, vertippst du dich manchmal?" },
                 { short: "Gefühle", info: "KIs haben keine echten Gefühle. Die Programme tun nur so, als hätten sie Emotionen, um menschlicher zu wirken.", q: "Haben KIs wirklich Gefühle?", a: ["Ja, die KI kann wirklich weinen.", "Nein, sie tut nur so als ob.", "Nur wenn man sie beleidigt."], c: 1, h: "Ein Computerchip kann zwar nett schreiben, aber er hat kein Herz." },
                 { short: "Satzbau", info: "Sätze einer KI sind meistens perfekt gebaut, wirken aber dadurch oft steif und künstlich.", q: "Wie wirkt der Satzbau einer KI oft auf uns?", a: ["Die Sätze wirken perfekt gebaut, aber steif.", "Die Sätze sind völlig chaotisch und wirr.", "Die Sätze sind immer extrem kurz."], c: 0, h: "Wirkt der Text wie aus einem perfekten Deutsch-Schulbuch kopiert?" },
                 { short: "Wiederholung", info: "KIs wiederholen oft Informationen, weil sie versuchen, besonders gründlich zu antworten.", q: "Was ist eine textliche Eigenheit von KIs?", a: ["Jedes Wort kommt im Text nur einmal vor.", "Sie nutzt niemals Eigenschaftswörter.", "Sie wiederholen oft Informationen im Text."], c: 2, h: "Erklärt der Text ein und dieselbe Sache vielleicht zwei- oder dreimal?" },
                 { short: "Wissen", info: "KIs wissen viel Allgemeines, kennen aber keine privaten Details aus deinem täglichen Leben oder deiner Umgebung.", q: "Was weiß eine KI standardmäßig nicht?", a: ["Dass die Erde eine Kugel ist.", "Private Details aus meinem täglichen Leben.", "Wie spät es gerade in Deutschland ist."], c: 1, h: "Weiß die KI, was du heute Morgen zum Frühstück gegessen hast?" },
                 { short: "Witze", info: "KI-Witze wirken oft hölzern und unlogisch. Den Programmen fehlt das echte Verständnis für Humor.", q: "Wie empfinden Menschen oft KI-Witze?", a: ["Die Witze wirken unlogisch oder trocken.", "Die Witze sind für alle extrem lustig.", "Die Witze sind meistens viel zu kurz."], c: 0, h: "Oft fehlt bei KI-Witzen die wirkliche Pointe oder der Witz wird erklärt." },
-                { short: "Tempo", info: "KIs schreiben extrem schnell. Computer tippen in Sekunden, wofür Menschen Stunden bräuchten.", q: "Wie schnell generiert eine KI einen ganzen Aufsatz?", a: ["Sie braucht dafür mehrere Stunden.", "Sie braucht für den Aufsatz die ganze Nacht.", "Sie schreibt alles in wenigen Sekunden."], c: 2, h: "Ein Mensch braucht Zeit zum Nachdenken and Tippen. Wie ist das bei der KI?" },
+                { short: "Tempo", info: "KIs schreiben extrem schnell. Computer tippen in Sekunden, wofür Menschen Stunden bräuchten.", q: "Wie schnell generiert eine KI einen ganzen Aufsatz?", a: ["Sie braucht dafür mehrere Stunden.", "Sie braucht für den Aufsatz die ganze Nacht.", "Sie schreibt alles in wenigen Sekunden."], c: 2, h: "Ein Mensch braucht Zeit zum Nachdenken und Tippen. Wie ist das bei der KI?" },
                 { short: "Stil", info: "Der Stil einer KI ist sachlich und neutral. Die Programme versuchen, Gefühle zu vermeiden.", q: "Welcher Grundton ist typisch für KI-Texte?", a: ["Sie ist sehr emotional und oft wütend.", "Sie schreibt sachlich und neutral.", "Sie wirkt beim Schreiben hektisch."], c: 1, h: "KIs versuchen fast immer, neutral und informativ zu klingen." }
             ],
             fak: [
@@ -713,9 +734,50 @@
         }
         function goToHub() { showView('view-hub'); updateUI(); }
         function backToMenu() { openMissionMenu(currentType); }
-        function toggleLeftSidebar() { document.getElementById('sidebar-left').classList.toggle('open'); document.getElementById('overlay-bg').classList.add('active'); }
-        function toggleRightSidebar() { document.getElementById('sidebar-right').classList.toggle('open'); document.getElementById('overlay-bg').classList.add('active'); }
-        function closeSidebars() { document.getElementById('sidebar-left').classList.remove('open'); document.getElementById('sidebar-right').classList.remove('open'); document.getElementById('overlay-bg').classList.remove('active'); }
+        
+        function toggleLeftSidebar() { 
+            const sidebar = document.getElementById('sidebar-left');
+            const overlay = document.getElementById('overlay-bg');
+            const btn = document.getElementById('btn-toggle-left');
+            sidebar.classList.toggle('open'); 
+            if(sidebar.classList.contains('open')) {
+                overlay.classList.add('active');
+                btn.style.opacity = "0"; // Knopf unsichtbar machen
+                btn.style.pointerEvents = "none";
+            } else {
+                if(!document.getElementById('sidebar-right').classList.contains('open')) overlay.classList.remove('active');
+                btn.style.opacity = "1";
+                btn.style.pointerEvents = "auto";
+            }
+        }
+        
+        function toggleRightSidebar() { 
+            const sidebar = document.getElementById('sidebar-right');
+            const overlay = document.getElementById('overlay-bg');
+            const btn = document.getElementById('btn-toggle-right');
+            sidebar.classList.toggle('open'); 
+            if(sidebar.classList.contains('open')) {
+                overlay.classList.add('active');
+                btn.style.opacity = "0";
+                btn.style.pointerEvents = "none";
+            } else {
+                if(!document.getElementById('sidebar-left').classList.contains('open')) overlay.classList.remove('active');
+                btn.style.opacity = "1";
+                btn.style.pointerEvents = "auto";
+            }
+        }
+        
+        function closeSidebars() { 
+            document.getElementById('sidebar-left').classList.remove('open'); 
+            document.getElementById('sidebar-right').classList.remove('open'); 
+            document.getElementById('overlay-bg').classList.remove('active');
+            // Knöpfe wieder einblenden
+            document.getElementById('btn-toggle-left').style.opacity = "1";
+            document.getElementById('btn-toggle-left').style.pointerEvents = "auto";
+            document.getElementById('btn-toggle-right').style.opacity = "1";
+            document.getElementById('btn-toggle-right').style.pointerEvents = "auto";
+        }
+        
         function closeGlobalFinish() { document.getElementById('global-finish-overlay').classList.remove('active'); }
 
         window.onload = loadFromUrl;
