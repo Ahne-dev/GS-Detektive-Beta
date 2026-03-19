@@ -596,6 +596,7 @@
             selectedIndex = null;
             const names = {img: 'Bild-Labor', txt: 'Text-Check', fak: 'Fakten-Radar', dat: 'Sicherheit'};
             document.getElementById('mission-category-label').innerText = names[currentType];
+            document.getElementById('missionTitle').innerText = step.short;
             document.getElementById('stepCounter').innerText = `Station ${currentIndex+1}/${(missionData[currentType] || []).length}`;
             document.getElementById('info-text').innerText = step.info;
             document.getElementById('question-text').innerText = step.q;
